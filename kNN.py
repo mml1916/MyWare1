@@ -67,6 +67,21 @@ def file2matrix(filename):
 		classLabelVector.append(int(listFromLine[-1]))
 		index += 1
 	return returnMat,classLabelVector
+
 	
-	
+#准备数据：归一化数值（处理不同取值范围的特征值），方法使用当前值减去最小值，然后除以取值范围（83和85行）
+def autoNorm(dataSet):
+	#在数组第一维中比较，在列中选取最小值，而不是选取当前行的最小值，如a=np.array([1,5,3],[2,4,6]), 则a.min(0) = [1,2,3]
+	minVals = dataSet.min(0)
+	maxVals = dataSet.max(0)
+	ranges = maxVals-minVals
+	#创建一个和dataSet维度相等的全0数组
+	normDataSet = zeros(shape(dataSet))
+	#求dataSet数组第一维的维数
+	m = dataSet.shape[0]
+	#利用拼贴tile将minVals重复m次，详细用法参见有道云笔记numpy，之后和dataSet相减
+	normDataSet = dataSet-tile(minVals,(m,1))
+	#同上，相除
+	normDataSet = normDataSet/tile(ranges,(m,1))
+	return normDataSet, ranges, minVals
 	
