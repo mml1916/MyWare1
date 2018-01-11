@@ -15,7 +15,9 @@ def createDataSet():
 	group = array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
 	labels = ['A', 'A', 'B', 'B']
 	return group, labels
-#
+	
+
+# k-近邻算法
 #利用shape可输出矩阵的维度，即行数和列数。shape[0]和shape[1]分别代表行和列的长度
 def classify0(inX, dataSet, labels, k):
 	dataSetSize = dataSet.shape[0] #4
@@ -44,7 +46,8 @@ def classify0(inX, dataSet, labels, k):
 	#sorted  为python内置排序函数，该语句为使用字典classCount的迭代器进行排列，按排列对象的第1个域（也即每个类型的频数）大小进行比较，降序排列
 	sortedClassCount = sorted(classCount.iteritems(), key=operator.itemgetter(1), reverse=True)
 	return sortedClassCount[0][0]
-	
+
+#准备数据：	从文本文件中解析数据
 def file2matrix(filename):
 	fr = open(filename)
 	#readlines()每次按行读取整个文件内容，将读取到的内容放到一个列表中，返回list类型，该列表可以由for... in ... 结构进行处理
@@ -85,3 +88,31 @@ def autoNorm(dataSet):
 	normDataSet = normDataSet/tile(ranges,(m,1))
 	return normDataSet, ranges, minVals
 	
+#测试算法：评估算法的正确率，通常只提供数据的90%作为训练样本来训练分类器，而使用其余的10%数据去测试分类器
+def datingClassTest():
+	hoRatio = 0.10
+	#从文件中读取数据并将其转换为归一化特征值
+	datingDataMat,datingLabels = file2matrix('datingTestSet.txt')
+	normMat, ranges, datingLabels = file2matrix(datingDataMat)
+	#求normMat数组第一维的维数
+	m = normMat.shape[0]
+	#求用于测试的数据的维数，即有多少数据用于测试
+	numTestVecs = int(m*hoRatio)
+	errorCount = 0.0
+	#把10%的数据的每一个样本取出作为一个数组
+	for i in range(numTestVecs):
+		#normMat[i,:]从10%的数据集中取出一个样本（也即整个数据中的第i个样本）作为预测对象
+		#normMat[numTestVecs:m,:]：在整个数据集normMat中，取出前numTestVecs作为测试数据，从numTestVecs 开始到normMat
+		#数组结束作为用于训练的90%数据
+		#datingLabels[numTestVecs:m]:90%数据的标签
+		#3：取前三个距离最近的数据样本的标签
+		classifierResult = classify0(normMat[i,:],normMat[numTestVecs:m,:],\
+							datingLabels[numTestVecs:m],3)
+		#预测的标签和实际的标签
+		print "the classifier came back with :%d, the real answer is: %d"\
+					%(classifierResult, datingLabels[i])
+		#测试的数据样本中出错的次数/ 测试数据样本个数
+		if (classifierResult != datingLabels[i]: errorCount += 1.0)
+	print "the total error rate is: %f" %(errorCount/float(numTestVecs))
+	
+
