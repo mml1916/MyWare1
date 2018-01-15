@@ -92,8 +92,8 @@ def autoNorm(dataSet):
 def datingClassTest():
 	hoRatio = 0.10
 	#从文件中读取数据并将其转换为归一化特征值
-	datingDataMat,datingLabels = file2matrix('datingTestSet.txt')
-	normMat, ranges, datingLabels = file2matrix(datingDataMat)
+	datingDataMat,datingLabels = file2matrix('datingTestSet2.txt')
+	normMat, ranges, minVals = autoNorm(datingDataMat)
 	#求normMat数组第一维的维数
 	m = normMat.shape[0]
 	#求用于测试的数据的维数，即有多少数据用于测试
@@ -112,7 +112,7 @@ def datingClassTest():
 		print "the classifier came back with :%d, the real answer is: %d"\
 					%(classifierResult, datingLabels[i])
 		#测试的数据样本中出错的次数/ 测试数据样本个数
-		if (classifierResult != datingLabels[i]: errorCount += 1.0)
+		if (classifierResult != datingLabels[i]): errorCount += 1.0
 	print "the total error rate is: %f" %(errorCount/float(numTestVecs))
 	
 
